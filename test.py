@@ -7,12 +7,27 @@ from pygame.locals import *
 
 class Peg(pygame.sprite.Sprite):
 
-    def __init__(self, pos):
+    def __init__(self, p):
         super(Peg, self).__init__()
         self.image = pygame.image.load('ycircle.png')
         self.image = pygame.transform.scale(self.image, (35, 35))
         self.rect = self.image.get_rect()
-        self.rect.center = pos
+        self.rect.center = p
+
+    def update(self):
+        pass
+
+
+class Hole(pygame.sprite.Sprite):
+    def __init__(self, p):
+        super(Hole, self).__init__()
+        self.image = pygame.image.load('bsquare.png')
+        self.image = pygame.transform.scale(self.image, (28, 28))
+        self.rect = self.image.get_rect()
+        self.rect.center = p
+        self.peg = None
+        self.neighborOne = None
+        self.neighborTwo = None
 
     def update(self):
         pass
@@ -24,27 +39,86 @@ pygame.init()
 screen = pygame.display.set_mode([500, 500])
 
 # Create sprites
-sgroup = pygame.sprite.RenderPlain()
-peg1 = Peg((99, 368))
-sgroup.add(peg1)
-peg2 = Peg((199, 368))
-sgroup.add(peg2)
-peg3 = Peg((299, 368))
-sgroup.add(peg3)
-peg4 = Peg((399, 368))
-sgroup.add(peg4)
-peg5 = Peg((149, 283))
-sgroup.add(peg5)
-peg6 = Peg((249, 283))
-sgroup.add(peg6)
-peg7 = Peg((349, 283))
-sgroup.add(peg7)
-peg8 = Peg((199, 198))
-sgroup.add(peg8)
-peg9 = Peg((299, 198))
-sgroup.add(peg9)
+pegs = pygame.sprite.RenderPlain()
+holes = pygame.sprite.RenderPlain()
+activePeg = None
 
-activePeg = Peg((0, 0))
+hole1 = Hole((100, 370))
+holes.add(hole1)
+hole2 = Hole((200, 370))
+holes.add(hole2)
+hole3 = Hole((300, 370))
+holes.add(hole3)
+hole4 = Hole((400, 370))
+holes.add(hole4)
+hole5 = Hole((150, 285))
+holes.add(hole5)
+hole6 = Hole((250, 285))
+holes.add(hole6)
+hole7 = Hole((350, 285))
+holes.add(hole7)
+hole8 = Hole((200, 200))
+holes.add(hole8)
+hole9 = Hole((300, 200))
+holes.add(hole9)
+hole10 = Hole((250, 125))
+holes.add(hole10)
+holes.add(hole9)
+
+hole1.neighborOne = hole3
+hole1.neighborTwo = hole8
+
+hole2.neighborOne = hole4
+hole2.neighborTwo = hole9
+
+hole3.neighborOne = hole1
+hole3.neighborTwo = hole8
+
+hole4.neighborOne = hole2
+hole4.neighborTwo = hole9
+
+hole5.neighborOne = hole7
+hole5.neighborTwo = hole10
+
+hole7.neighborOne = hole5
+hole7.neighborTwo = hole10
+
+hole8.neighborOne = hole1
+hole8.neighborTwo = hole3
+
+hole9.neighborOne = hole2
+hole9.neighborTwo = hole9
+
+hole10.neighborOne = hole5
+hole10.neighborTwo = hole7
+
+peg1 = Peg((99, 368))
+pegs.add(peg1)
+hole1.Peg = peg1
+peg2 = Peg((199, 368))
+pegs.add(peg2)
+hole2.Peg = peg2
+peg3 = Peg((299, 368))
+pegs.add(peg3)
+hole3.Peg = peg3
+peg4 = Peg((399, 368))
+pegs.add(peg4)
+hole4.Peg = peg4
+peg5 = Peg((149, 283))
+pegs.add(peg5)
+hole5.Peg = peg5
+peg6 = Peg((249, 283))
+pegs.add(peg6)
+hole6.Peg = peg6
+peg7 = Peg((349, 283))
+pegs.add(peg7)
+hole7.Peg = peg7
+peg8 = Peg((199, 198))
+pegs.add(peg8)
+hole8.Peg = peg8
+peg9 = Peg((299, 198))
+pegs.add(peg9)
+hole9.Peg = None
 
 # Run until the user asks to quit
 running = True
@@ -54,28 +128,31 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONUP:
+        if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
-            for peg in sgroup:
+            for peg in pegs:
                 if peg.rect.collidepoint(pos):
                     activePeg = peg
+        if event.type == pygame.MOUSEBUTTONUP:
+            if activePeg is not None:
+                pos = pygame.mouse.get_pos()
+                for hole in holes:
+                    if hole.rect.collidepoint(pos):
+                        activePeg.rect.x = hole.rect.x
+                        activePeg.rect.y = hole.rect.y
+                        activePeg = None
+        if event.type == pygame.MOUSEMOTION:
+            pos = pygame.mouse.get_pos()
+            if activePeg is not None:
+                activePeg.rect.x = pos[0]
+                activePeg.rect.y = pos[1]
 
     screen.fill((255, 255, 255))
 
     pygame.draw.polygon(screen, 'brown', [(25, 400), (475,400), (250, 50)])
 
-    pygame.draw.circle(screen, 'black', (100, 370), 20)
-    pygame.draw.circle(screen, 'black', (200, 370), 20)
-    pygame.draw.circle(screen, 'black', (300, 370), 20)
-    pygame.draw.circle(screen, 'black', (400, 370), 20)
-    pygame.draw.circle(screen, 'black', (150, 285), 20)
-    pygame.draw.circle(screen, 'black', (250, 285), 20)
-    pygame.draw.circle(screen, 'black', (350, 285), 20)
-    pygame.draw.circle(screen, 'black', (200, 200), 20)
-    pygame.draw.circle(screen, 'black', (300, 200), 20)
-    pygame.draw.circle(screen, 'black', (250, 125), 20)
-
-    sgroup.draw(screen)
+    holes.draw(screen)
+    pegs.draw(screen)
 
     # Flip the display
     pygame.display.flip()
