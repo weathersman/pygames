@@ -1,5 +1,5 @@
 # Simple pygame program
-
+import math
 # Import and initialize the pygame library
 import pygame
 from pygame.locals import *
@@ -23,10 +23,11 @@ class Hole(pygame.sprite.Sprite):
     def __init__(self, p):
         super(Hole, self).__init__()
         self.image = pygame.image.load('bsquare.png')
-        self.image = pygame.transform.scale(self.image, (28, 28))
+        self.image = pygame.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
         self.rect.center = p
         self.peg = None
+        self.name = None
         self.neighborone = list()
         self.neighbortwo = list()
 
@@ -44,29 +45,45 @@ class Board:
     pegs = pygame.sprite.RenderPlain()
     holes = pygame.sprite.RenderPlain()
 
+    def displayvalues(self):
+        print("***********************")
+        if self.activehole is not None:
+            print("Active Hole: " + self.activehole.name)
+        else:
+            print("Active Hole is None")
+
+        if self.activepeg is not None:
+            print("Active Peg: " + self.activepeg.name)
+        else:
+            print("Active Peg is None")
+
+        for hole in self.holes:
+            if hole.peg is not None:
+                print(hole.name + " contains " + hole.peg.name)
+            else:
+                print(hole.name + " contains None")
+        print("***********************")
+
     def move(self, targethole):
-
-        print("activePeg is " + self.activepeg.name)
-
-        if self.activehole.neighborone[1] is targethole:
+        if (self.activehole.neighborone[1] is targethole) and (targethole.peg is None):
             if self.activehole.neighborone[0].peg is not None:
-                self.activepeg.rect.x = targethole.rect.x
-                self.activepeg.rect.y = targethole.rect.y
+                self.activepeg.rect.x = targethole.rect.x - 8
+                self.activepeg.rect.y = targethole.rect.y - 8
                 targethole.peg = self.activepeg
                 self.pegs.remove(self.activehole.neighborone[0].peg)
                 self.activehole.neighborone[0].peg = None
                 self.activehole.peg = None
-        elif self.activehole.neighbortwo[1] is targethole:
+        elif (self.activehole.neighbortwo[1] is targethole) and (targethole.peg is None):
             if self.activehole.neighbortwo[0].peg is not None:
-                self.activepeg.rect.x = targethole.rect.x
-                self.activepeg.rect.y = targethole.rect.y
+                self.activepeg.rect.x = targethole.rect.x - 8
+                self.activepeg.rect.y = targethole.rect.y - 8
                 targethole.peg = self.activepeg
                 self.pegs.remove(self.activehole.neighbortwo[0].peg)
                 self.activehole.neighbortwo[0].peg = None
                 self.activehole.peg = None
         else:
-            self.activepeg.rect.x = self.activehole.rect.x
-            self.activepeg.rect.y = self.activehole.rect.y
+            self.activepeg.rect.x = self.activehole.rect.x - 8
+            self.activepeg.rect.y = self.activehole.rect.y - 8
 
         self.activehole = None
         self.activepeg = None
@@ -79,24 +96,34 @@ def setupgame():
     pegboard = Board()
 
     hole1 = Hole((100, 370))
+    hole1.name = "hole1"
     pegboard.holes.add(hole1)
     hole2 = Hole((200, 370))
+    hole2.name = "hole2"
     pegboard.holes.add(hole2)
     hole3 = Hole((300, 370))
+    hole3.name = "hole3"
     pegboard.holes.add(hole3)
     hole4 = Hole((400, 370))
+    hole4.name = "hole4"
     pegboard.holes.add(hole4)
     hole5 = Hole((150, 285))
+    hole5.name = "hole5"
     pegboard.holes.add(hole5)
     hole6 = Hole((250, 285))
+    hole6.name = "hole6"
     pegboard.holes.add(hole6)
     hole7 = Hole((350, 285))
+    hole7.name = "hole7"
     pegboard.holes.add(hole7)
     hole8 = Hole((200, 200))
+    hole8.name = "hole8"
     pegboard.holes.add(hole8)
     hole9 = Hole((300, 200))
+    hole9.name = "hole9"
     pegboard.holes.add(hole9)
     hole10 = Hole((250, 125))
+    hole10.name = "hole10"
     pegboard.holes.add(hole10)
 
     hole1.neighborone.insert(0, hole2)
@@ -123,6 +150,11 @@ def setupgame():
     hole5.neighborone.insert(1, hole7)
     hole5.neighbortwo.insert(0, hole8)
     hole5.neighbortwo.insert(1, hole10)
+
+    hole6.neighborone.insert(0, None)
+    hole6.neighborone.insert(1, None)
+    hole6.neighbortwo.insert(0, None)
+    hole6.neighbortwo.insert(1, None)
 
     hole7.neighborone.insert(0, hole6)
     hole7.neighborone.insert(1, hole5)
@@ -218,14 +250,17 @@ while running:
                     if hole.peg is not None:
                         board.activepeg = hole.peg
                         board.activehole = hole
+            board.displayvalues()
         if event.type == pygame.MOUSEBUTTONUP:
             if board.activepeg is not None:
                 pos = pygame.mouse.get_pos()
                 for hole in board.holes:
-                    if hole.rect.collidepoint(pos):
+                    dist = math.sqrt(math.pow(hole.rect.x - pos[0], 2) + math.pow(hole.rect.y - pos[1], 2))
+                    if dist < 50:
                         board.move(hole)
                         board.activepeg = None
                         board.activehole = None
+            board.displayvalues()
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
             if board.activepeg is not None:
@@ -233,9 +268,10 @@ while running:
                 board.activepeg.rect.y = pos[1]
 
     screen.fill((255, 255, 255))
-
-    pygame.draw.polygon(screen, 'chocolate', [(25, 400), (475,400), (250, 50)])
-
+    pygame.draw.polygon(screen, 'black', [(30, 410), (490, 410), (265, 60)])
+    pygame.draw.polygon(screen, 'black', [(30, 410), (40, 400), (25, 400)])
+    pygame.draw.polygon(screen, 'black', [(265, 60), (250, 50), (250, 80)])
+    pygame.draw.polygon(screen, 'lightsalmon4', [(25, 400), (475, 400), (250, 50)])
     board.holes.draw(screen)
     board.pegs.draw(screen)
 
