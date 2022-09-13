@@ -33,6 +33,28 @@ class Hole(pygame.sprite.Sprite):
         pass
 
 
+class Board():
+    def __init__(self):
+        super(Board, self).__init__()
+
+    positions = list()
+    activeHole = None
+    activePeg = None
+
+    def move(self, h):
+        if self.activeHole.neighborOne is h or self.activeHole.neighborTwo is h:
+            if self.activeHole.peg is not None and h.peg is None:
+                h.peg = self.activePeg
+                self.activeHole.peg = None
+                h.peg.rect.x = h.rect.x
+                h.peg.rect.y = h.rect.y
+                self.activeHole = None
+                self.activePeg = None
+
+    def update(self):
+        pass
+
+
 pygame.init()
 
 # Set up the drawing window
@@ -41,7 +63,6 @@ screen = pygame.display.set_mode([500, 500])
 # Create sprites
 pegs = pygame.sprite.RenderPlain()
 holes = pygame.sprite.RenderPlain()
-activePeg = None
 
 hole1 = Hole((100, 370))
 holes.add(hole1)
@@ -63,7 +84,6 @@ hole9 = Hole((300, 200))
 holes.add(hole9)
 hole10 = Hole((250, 125))
 holes.add(hole10)
-holes.add(hole9)
 
 hole1.neighborOne = hole3
 hole1.neighborTwo = hole8
@@ -91,6 +111,18 @@ hole9.neighborTwo = hole9
 
 hole10.neighborOne = hole5
 hole10.neighborTwo = hole7
+
+board = Board()
+board.positions.insert(0, hole1)
+board.positions.insert(1, hole2)
+board.positions.insert(2, hole3)
+board.positions.insert(3, hole4)
+board.positions.insert(4, hole5)
+board.positions.insert(5, hole6)
+board.positions.insert(6, hole7)
+board.positions.insert(7, hole8)
+board.positions.insert(8, hole9)
+board.positions.insert(9, hole10)
 
 peg1 = Peg((99, 368))
 pegs.add(peg1)
@@ -130,22 +162,21 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
-            for peg in pegs:
-                if peg.rect.collidepoint(pos):
-                    activePeg = peg
+            for hole in holes:
+                if hole.rect.collidepoint(pos) and hole.peg is not None:
+                    board.activePeg = hole.peg
+                    board.activeHole = hole
         if event.type == pygame.MOUSEBUTTONUP:
-            if activePeg is not None:
+            if board.activePeg is not None:
                 pos = pygame.mouse.get_pos()
                 for hole in holes:
                     if hole.rect.collidepoint(pos):
-                        activePeg.rect.x = hole.rect.x
-                        activePeg.rect.y = hole.rect.y
-                        activePeg = None
+                        board.move(hole)
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
-            if activePeg is not None:
-                activePeg.rect.x = pos[0]
-                activePeg.rect.y = pos[1]
+            if board.activePeg is not None:
+                board.activePeg.rect.x = pos[0]
+                board.activePeg.rect.y = pos[1]
 
     screen.fill((255, 255, 255))
 
