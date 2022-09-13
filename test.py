@@ -25,31 +25,23 @@ class Hole(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (28, 28))
         self.rect = self.image.get_rect()
         self.rect.center = p
-        self.peg = None
-        self.neighborOne = None
-        self.neighborTwo = None
+        self.peg = Peg((0, 0))
+        self.neighborOne = list()
+        self.neighborTwo = list()
 
     def update(self):
         pass
 
 
-class Board():
+class Board:
     def __init__(self):
         super(Board, self).__init__()
 
-    positions = list()
     activeHole = None
     activePeg = None
 
-    def move(self, h):
-        if self.activeHole.neighborOne is h or self.activeHole.neighborTwo is h:
-            if self.activeHole.peg is not None and h.peg is None:
-                h.peg = self.activePeg
-                self.activeHole.peg = None
-                h.peg.rect.x = h.rect.x
-                h.peg.rect.y = h.rect.y
-                self.activeHole = None
-                self.activePeg = None
+   # def move(self, h):
+
 
     def update(self):
         pass
@@ -59,6 +51,7 @@ pygame.init()
 
 # Set up the drawing window
 screen = pygame.display.set_mode([500, 500])
+board = Board()
 
 # Create sprites
 pegs = pygame.sprite.RenderPlain()
@@ -85,72 +78,78 @@ holes.add(hole9)
 hole10 = Hole((250, 125))
 holes.add(hole10)
 
-hole1.neighborOne = hole3
-hole1.neighborTwo = hole8
+hole1.neighborOne.insert(0, hole2)
+hole1.neighborOne.insert(1, hole3)
+hole1.neighborTwo.insert(0, hole5)
+hole1.neighborTwo.insert(1, hole8)
 
-hole2.neighborOne = hole4
-hole2.neighborTwo = hole9
+hole2.neighborOne.insert(0, hole3)
+hole2.neighborOne.insert(1, hole4)
+hole2.neighborTwo.insert(0, hole5)
+hole2.neighborTwo.insert(1, hole9)
 
-hole3.neighborOne = hole1
-hole3.neighborTwo = hole8
+hole3.neighborOne.insert(0, hole2)
+hole3.neighborOne.insert(1, hole1)
+hole3.neighborTwo.insert(0, hole6)
+hole3.neighborTwo.insert(1, hole8)
 
-hole4.neighborOne = hole2
-hole4.neighborTwo = hole9
+hole4.neighborOne.insert(0, hole3)
+hole4.neighborOne.insert(1, hole2)
+hole4.neighborTwo.insert(0, hole7)
+hole4.neighborTwo.insert(1, hole9)
 
-hole5.neighborOne = hole7
-hole5.neighborTwo = hole10
+hole5.neighborOne.insert(0, hole6)
+hole5.neighborOne.insert(1, hole7)
+hole5.neighborTwo.insert(0, hole8)
+hole5.neighborTwo.insert(1, hole10)
 
-hole7.neighborOne = hole5
-hole7.neighborTwo = hole10
+hole7.neighborOne.insert(0, hole6)
+hole7.neighborOne.insert(1, hole5)
+hole7.neighborTwo.insert(0, hole9)
+hole7.neighborTwo.insert(1, hole10)
 
-hole8.neighborOne = hole1
-hole8.neighborTwo = hole3
+hole8.neighborOne.insert(0, hole5)
+hole8.neighborOne.insert(1, hole1)
+hole8.neighborTwo.insert(0, hole6)
+hole8.neighborTwo.insert(1, hole3)
 
-hole9.neighborOne = hole2
-hole9.neighborTwo = hole9
+hole9.neighborOne.insert(0, hole6)
+hole9.neighborOne.insert(1, hole2)
+hole9.neighborTwo.insert(0, hole7)
+hole9.neighborTwo.insert(1, hole4)
 
-hole10.neighborOne = hole5
-hole10.neighborTwo = hole7
-
-board = Board()
-board.positions.insert(0, hole1)
-board.positions.insert(1, hole2)
-board.positions.insert(2, hole3)
-board.positions.insert(3, hole4)
-board.positions.insert(4, hole5)
-board.positions.insert(5, hole6)
-board.positions.insert(6, hole7)
-board.positions.insert(7, hole8)
-board.positions.insert(8, hole9)
-board.positions.insert(9, hole10)
+hole10.neighborOne.insert(0, hole8)
+hole10.neighborOne.insert(1, hole5)
+hole10.neighborTwo.insert(0, hole9)
+hole10.neighborTwo.insert(1, hole7)
 
 peg1 = Peg((99, 368))
 pegs.add(peg1)
-hole1.Peg = peg1
+hole1.peg = peg1
 peg2 = Peg((199, 368))
 pegs.add(peg2)
-hole2.Peg = peg2
+hole2.peg = peg2
 peg3 = Peg((299, 368))
 pegs.add(peg3)
-hole3.Peg = peg3
+hole3.peg = peg3
 peg4 = Peg((399, 368))
 pegs.add(peg4)
-hole4.Peg = peg4
+hole4.peg = peg4
 peg5 = Peg((149, 283))
 pegs.add(peg5)
-hole5.Peg = peg5
+hole5.peg = peg5
 peg6 = Peg((249, 283))
 pegs.add(peg6)
-hole6.Peg = peg6
+hole6.peg = peg6
 peg7 = Peg((349, 283))
 pegs.add(peg7)
-hole7.Peg = peg7
+hole7.peg = peg7
 peg8 = Peg((199, 198))
 pegs.add(peg8)
-hole8.Peg = peg8
+hole8.peg = peg8
 peg9 = Peg((299, 198))
 pegs.add(peg9)
-hole9.Peg = None
+hole9.peg = None
 
 # Run until the user asks to quit
 running = True
@@ -162,16 +161,19 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
+            print(pos)
             for hole in holes:
-                if hole.rect.collidepoint(pos) and hole.peg is not None:
+                if (hole.rect.collidepoint(pos)) and (hole.peg is not None):
                     board.activePeg = hole.peg
+                    print("active peg set")
                     board.activeHole = hole
         if event.type == pygame.MOUSEBUTTONUP:
             if board.activePeg is not None:
                 pos = pygame.mouse.get_pos()
                 for hole in holes:
                     if hole.rect.collidepoint(pos):
-                        board.move(hole)
+                        board.activePeg.rect.x = hole.rect.x
+                        board.activePeg.rect.y = hole.rect.y
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
             if board.activePeg is not None:
