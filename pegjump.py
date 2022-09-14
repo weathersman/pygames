@@ -21,7 +21,7 @@ class Peg(pygame.sprite.Sprite):
 class Hole(pygame.sprite.Sprite):
     def __init__(self, p):
         super(Hole, self).__init__()
-        self.image = pygame.image.load('bsquare.png')
+        self.image = pygame.image.load('bcircle.png')
         self.image = pygame.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
         self.rect.center = p
