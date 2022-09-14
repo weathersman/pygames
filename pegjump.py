@@ -346,7 +346,7 @@ while running:
                     if hole.peg is not None:
                         board.activepeg = hole.peg
                         board.activehole = hole
-            board.displayvalues()
+            #board.displayvalues()
         if event.type == pygame.MOUSEBUTTONUP:
             if board.activepeg is not None:
                 pos = pygame.mouse.get_pos()
@@ -355,7 +355,7 @@ while running:
                     dist = math.sqrt(math.pow(hole.rect.x - pos[0], 2) + math.pow(hole.rect.y - pos[1], 2))
                     if dist < 50:
                         board.move(hole)
-            board.displayvalues()
+            #board.displayvalues()
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
             if board.activepeg is not None:
@@ -395,12 +395,19 @@ while running:
     textRect4.x = 320
     textRect4.y = 50
 
+    text5 = font.render('Leave Just One!', True, (0, 0, 0), (255, 255, 255))
+    textRect5 = text5.get_rect()
+    textRect5.x = 50
+    textRect5.y = 50
+
     screen.blit(text1, textRect1)
     screen.blit(text2, textRect2)
     screen.blit(text3, textRect3)
 
     if len(board.pegs) == 1:
         screen.blit(text4, textRect4)
+
+    screen.blit(text5, textRect5)
 
     # Update the display
     pygame.display.flip()
