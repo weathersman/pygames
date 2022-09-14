@@ -67,40 +67,43 @@ class Board:
         print("***********************")
 
     def move(self, targethole):
-        if (self.activehole.neighborone[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborone[0].peg is not None):
-            self.activepeg.rect.x = targethole.rect.x - 8
-            self.activepeg.rect.y = targethole.rect.y - 8
-            targethole.peg = self.activepeg
-            self.pegs.remove(self.activehole.neighborone[0].peg)
-            self.activehole.neighborone[0].peg = None
-            self.activehole.peg = None
-        elif (self.activehole.neighbortwo[1] is targethole) and (targethole.peg is None) and (self.activehole.neighbortwo[0].peg is not None):
-            self.activepeg.rect.x = targethole.rect.x - 8
-            self.activepeg.rect.y = targethole.rect.y - 8
-            targethole.peg = self.activepeg
-            self.pegs.remove(self.activehole.neighbortwo[0].peg)
-            self.activehole.neighbortwo[0].peg = None
-            self.activehole.peg = None
-        elif (len(self.activehole.neighborthree) > 0) and (self.activehole.neighborthree[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborthree[0].peg is not None):
-            self.activepeg.rect.x = targethole.rect.x - 8
-            self.activepeg.rect.y = targethole.rect.y - 8
-            targethole.peg = self.activepeg
-            self.pegs.remove(self.activehole.neighborthree[0].peg)
-            self.activehole.neighborthree[0].peg = None
-            self.activehole.peg = None
-        elif (len(self.activehole.neighborfour) > 0) and (self.activehole.neighborfour[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborfour[0].peg is not None):
-            self.activepeg.rect.x = targethole.rect.x - 8
-            self.activepeg.rect.y = targethole.rect.y - 8
-            targethole.peg = self.activepeg
-            self.pegs.remove(self.activehole.neighborfour[0].peg)
-            self.activehole.neighborfour[0].peg = None
-            self.activehole.peg = None
-        else:
-            self.activepeg.rect.x = self.activehole.rect.x - 8
-            self.activepeg.rect.y = self.activehole.rect.y - 8
+        if(self.activehole is not None) and (self.activepeg is not None):
+            if (len(self.activehole.neighborone) > 0) and (self.activehole.neighborone[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborone[0].peg is not None):
+                self.activepeg.rect.x = targethole.rect.x - 8
+                self.activepeg.rect.y = targethole.rect.y - 8
+                targethole.peg = self.activepeg
+                self.pegs.remove(self.activehole.neighborone[0].peg)
+                self.activehole.neighborone[0].peg = None
+                self.activehole.peg = None
+            elif (len(self.activehole.neighbortwo) > 0) and (self.activehole.neighbortwo[1] is targethole) and (targethole.peg is None) and (self.activehole.neighbortwo[0].peg is not None):
+                self.activepeg.rect.x = targethole.rect.x - 8
+                self.activepeg.rect.y = targethole.rect.y - 8
+                targethole.peg = self.activepeg
+                self.pegs.remove(self.activehole.neighbortwo[0].peg)
+                self.activehole.neighbortwo[0].peg = None
+                self.activehole.peg = None
+            elif (len(self.activehole.neighborthree) > 0) and (self.activehole.neighborthree[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborthree[0].peg is not None):
+                self.activepeg.rect.x = targethole.rect.x - 8
+                self.activepeg.rect.y = targethole.rect.y - 8
+                targethole.peg = self.activepeg
+                self.pegs.remove(self.activehole.neighborthree[0].peg)
+                self.activehole.neighborthree[0].peg = None
+                self.activehole.peg = None
+            elif (len(self.activehole.neighborfour) > 0) and (self.activehole.neighborfour[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborfour[0].peg is not None):
+                self.activepeg.rect.x = targethole.rect.x - 8
+                self.activepeg.rect.y = targethole.rect.y - 8
+                targethole.peg = self.activepeg
+                self.pegs.remove(self.activehole.neighborfour[0].peg)
+                self.activehole.neighborfour[0].peg = None
+                self.activehole.peg = None
+            else:
+                self.activepeg.rect.x = self.activehole.rect.x - 8
+                self.activepeg.rect.y = self.activehole.rect.y - 8
 
-        self.activehole = None
-        self.activepeg = None
+            self.activehole = None
+            self.activepeg = None
+        else:
+            print("Invalid parameters sent to move()")
 
     def clear(self):
         for h in self.holes:
@@ -348,7 +351,8 @@ while running:
                         board.activehole = hole
             #board.displayvalues()
         if event.type == pygame.MOUSEBUTTONUP:
-            if board.activepeg is not None:
+            board.displayvalues()
+            if (board.activepeg is not None) and (board.activehole is not None):
                 pos = pygame.mouse.get_pos()
                 for hole in board.holes:
                     # is peg dropped close enough to hole?
