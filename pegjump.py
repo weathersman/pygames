@@ -351,7 +351,6 @@ while running:
                         board.activehole = hole
             #board.displayvalues()
         if event.type == pygame.MOUSEBUTTONUP:
-            board.displayvalues()
             if (board.activepeg is not None) and (board.activehole is not None):
                 pos = pygame.mouse.get_pos()
                 for hole in board.holes:
