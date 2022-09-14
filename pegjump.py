@@ -389,9 +389,18 @@ while running:
     textRect3.x = 10
     textRect3.y = 10
 
+    font3 = pygame.font.SysFont('Verdana',30)
+    text4 = font3.render('You Win!', True, (0, 0, 205), (255, 255, 255))
+    textRect4 = text4.get_rect()
+    textRect4.x = 320
+    textRect4.y = 50
+
     screen.blit(text1, textRect1)
     screen.blit(text2, textRect2)
     screen.blit(text3, textRect3)
+
+    if len(board.pegs) == 1:
+        screen.blit(text4, textRect4)
 
     # Update the display
     pygame.display.flip()
