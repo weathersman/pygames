@@ -235,7 +235,7 @@ def setupgame():
     hole12.neighbortwo.insert(0, hole14)
     hole12.neighbortwo.insert(1, hole15)
     hole12.neighborthree.insert(0, hole8)
-    hole12.neighborthree.insert(1, hole13)
+    hole12.neighborthree.insert(1, hole3)
     hole12.neighborfour.insert(0, hole11)
     hole12.neighborfour.insert(1, hole10)
 
@@ -364,12 +364,34 @@ while running:
 
     # draw the game elements
     screen.fill((255, 255, 255))
-    pygame.draw.polygon(screen, 'black', [(30, 410), (490, 410), (265, 60)])
-    pygame.draw.polygon(screen, 'black', [(30, 410), (40, 400), (25, 400)])
+    pygame.draw.polygon(screen, 'black', [(35, 410), (490, 410), (265, 60)])
+    pygame.draw.polygon(screen, 'black', [(35, 410), (45, 400), (25, 400)])
+    pygame.draw.line(screen, 'slategray', (490, 410), (475, 400))
     pygame.draw.polygon(screen, 'black', [(265, 60), (250, 50), (250, 80)])
     pygame.draw.polygon(screen, 'lightsalmon4', [(25, 400), (475, 400), (250, 50)])
     board.holes.draw(screen)
     board.pegs.draw(screen)
+
+    font = pygame.font.SysFont('arial', 14)
+    text1 = font.render('Jump pegs by click, drag, and release on an adjacent empty hole', True, (0, 0, 0), (255, 255, 255))
+    textRect1 = text1.get_rect()
+    textRect1.x = 40
+    textRect1.y = 440
+
+    text2 = font.render('Use Escape key to reset game', True, (0, 0, 0), (255, 255, 255))
+    textRect2 = text2.get_rect()
+    textRect2.x = 40
+    textRect2.y = 460
+
+    font2 = pygame.font.SysFont('Verdana', 26)
+    text3 = font2.render('Peg Jump', True, (0, 0, 0), (255, 255, 255))
+    textRect3 = text3.get_rect()
+    textRect3.x = 10
+    textRect3.y = 10
+
+    screen.blit(text1, textRect1)
+    screen.blit(text2, textRect2)
+    screen.blit(text3, textRect3)
 
     # Update the display
     pygame.display.flip()
