@@ -3,6 +3,7 @@ import math
 import pygame
 from pygame.locals import *
 
+pygame.mixer.init()
 
 class Peg(pygame.sprite.Sprite):
 
@@ -42,9 +43,12 @@ class Board:
 
     activehole = None
     activepeg = None
+    won = False
 
     pegs = pygame.sprite.RenderPlain()
     holes = pygame.sprite.RenderPlain()
+    pegsound = pygame.mixer.Sound("joy.wav")
+    winsound = pygame.mixer.Sound("yeahbaby.wav")
 
     # for debugging purposes
     def displayvalues(self):
@@ -71,6 +75,7 @@ class Board:
             if (len(self.activehole.neighborone) > 0) and (self.activehole.neighborone[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborone[0].peg is not None):
                 self.activepeg.rect.x = targethole.rect.x - 8
                 self.activepeg.rect.y = targethole.rect.y - 8
+                pygame.mixer.Sound.play(self.pegsound)
                 targethole.peg = self.activepeg
                 self.pegs.remove(self.activehole.neighborone[0].peg)
                 self.activehole.neighborone[0].peg = None
@@ -78,6 +83,7 @@ class Board:
             elif (len(self.activehole.neighbortwo) > 0) and (self.activehole.neighbortwo[1] is targethole) and (targethole.peg is None) and (self.activehole.neighbortwo[0].peg is not None):
                 self.activepeg.rect.x = targethole.rect.x - 8
                 self.activepeg.rect.y = targethole.rect.y - 8
+                pygame.mixer.Sound.play(self.pegsound)
                 targethole.peg = self.activepeg
                 self.pegs.remove(self.activehole.neighbortwo[0].peg)
                 self.activehole.neighbortwo[0].peg = None
@@ -85,6 +91,7 @@ class Board:
             elif (len(self.activehole.neighborthree) > 0) and (self.activehole.neighborthree[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborthree[0].peg is not None):
                 self.activepeg.rect.x = targethole.rect.x - 8
                 self.activepeg.rect.y = targethole.rect.y - 8
+                pygame.mixer.Sound.play(self.pegsound)
                 targethole.peg = self.activepeg
                 self.pegs.remove(self.activehole.neighborthree[0].peg)
                 self.activehole.neighborthree[0].peg = None
@@ -92,6 +99,7 @@ class Board:
             elif (len(self.activehole.neighborfour) > 0) and (self.activehole.neighborfour[1] is targethole) and (targethole.peg is None) and (self.activehole.neighborfour[0].peg is not None):
                 self.activepeg.rect.x = targethole.rect.x - 8
                 self.activepeg.rect.y = targethole.rect.y - 8
+                pygame.mixer.Sound.play(self.pegsound)
                 targethole.peg = self.activepeg
                 self.pegs.remove(self.activehole.neighborfour[0].peg)
                 self.activehole.neighborfour[0].peg = None
@@ -119,6 +127,7 @@ class Board:
 
 def setupgame():
     pegboard = Board()
+    pegboard.won = False
 
     hole1 = Hole((75, 370))
     hole1.name = "hole1"
@@ -219,8 +228,8 @@ def setupgame():
     hole9.neighbortwo.insert(0, hole12)
     hole9.neighbortwo.insert(1, hole14)
 
-    hole10.neighborone.insert(0, hole1)
-    hole10.neighborone.insert(1, hole6)
+    hole10.neighborone.insert(0, hole6)
+    hole10.neighborone.insert(1, hole1)
     hole10.neighbortwo.insert(0, hole13)
     hole10.neighbortwo.insert(1, hole15)
     hole10.neighborthree.insert(0, hole7)
@@ -392,7 +401,7 @@ while running:
     textRect3.x = 10
     textRect3.y = 10
 
-    font3 = pygame.font.SysFont('Verdana',30)
+    font3 = pygame.font.SysFont('Verdana', 30)
     text4 = font3.render('You Win!', True, (0, 0, 205), (255, 255, 255))
     textRect4 = text4.get_rect()
     textRect4.x = 320
@@ -409,6 +418,9 @@ while running:
 
     if len(board.pegs) == 1:
         screen.blit(text4, textRect4)
+        if not board.won:
+            pygame.mixer.Sound.play(board.winsound)
+            board.won = True
 
     screen.blit(text5, textRect5)
 
